@@ -20,6 +20,11 @@ services:
       - "4000:4000"
     depends_on:
       - mysql
+    environment:
+      DB_HOST: mysql
+      DB_USER: root
+      DB_PASS: example
+      DB_NAME: vuln_app
 
   frontend:
     build:
