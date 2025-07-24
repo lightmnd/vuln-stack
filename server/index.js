@@ -49,6 +49,18 @@ app.get('/user', (req, res) => {
 });
 
 
+// IDOR vulnerable endpoint
+app.get('/user/:id', (req, res) => {
+    const userId = req.params.id;
+    // No authentication or authorization check here (IDOR)
+    db.query(`SELECT * FROM users WHERE id = '${userId}'`, (err, result) => {
+        if (err) return res.status(500).send("SQL Error");
+        res.json(result);
+    });
+});
+
+
+
 const PORT = process.env.PORT || 4000;
 
 app.listen(4000, '0.0.0.0', () => {
