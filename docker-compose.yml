@@ -1,25 +1,24 @@
 version: '3.8'
-
 services:
   mysql:
-    platform: linux/x86_64
     image: mysql:5.7
-    container_name: mysql
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: example
       MYSQL_DATABASE: vuln_app
-    ports:
-      - "3306:3306"
     volumes:
-      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - mysql_data:/var/lib/mysql
+    ports:
+      - '3306:3306'
 
   backend:
-    build: ./server
-    ports:
-      - "4000:4000"
+    build:
+      context: ./server
     depends_on:
       - mysql
+    ports:
+      - '4000:4000'
     environment:
       DB_HOST: mysql
       DB_USER: root
@@ -30,8 +29,7 @@ services:
     build:
       context: ./client
     ports:
-      - "3000:3000"
-    stdin_open: true
+      - '3000:3000'
     depends_on:
       - backend
 
