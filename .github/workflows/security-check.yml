@@ -1,0 +1,63 @@
+name: 🔐 Security Check CI
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  sast:
+    name: 🧼 Static Code Analysis (SAST)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: 🔍 Run ESLint
+        run: |
+          npm ci
+          npx eslint . || exit 1
+
+      - name: 🧪 Run Snyk
+        uses: snyk/actions/node@master
+        with:
+          command: test
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+  dast:
+    name: 🧨 Dynamic Application Security Testing (DAST)
+    runs-on: ubuntu-latest
+    needs: sast
+
+    steps:
+      - name: 🐳 Run ZAP Baseline
+        uses: zaproxy/action-baseline@v0.9.0
+        with:
+          target: 'http://localhost:4000'
+
+  notify:
+    name: 📩 Send Email Notification on Failure
+    runs-on: ubuntu-latest
+    needs: [sast, dast]
+    if: failure()
+
+    steps:
+      - name: Send email
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.SMTP_SERVER }}
+          server_port: ${{ secrets.SMTP_PORT }}
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: "❌ CI/CD Security Scan Failed – ${{ github.repository }}"
+          body: |
+            Alert! La pipeline CI/CD ha fallito nel repo ${{ github.repository }}.
+
+            Branch: ${{ github.ref_name }}
+            Commit: ${{ github.sha }}
+            Autore: ${{ github.actor }}
+            Link: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+            ⚠️ Controlla SAST (ESLint/Snyk) e DAST (ZAP).
+          to: ${{ secrets.EMAIL_TO }}
+          from: ${{ secrets.EMAIL_FROM }}
