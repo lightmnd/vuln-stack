@@ -21,26 +21,18 @@ jobs:
         run: npx eslint .
         working-directory: ./client
 
-      - name: 🔑 Authenticate Snyk
-        run: npx snyk auth ${{ secrets.SNYK_TOKEN }}
-        working-directory: ./client
-
       - name: 🧪 Run Snyk on client
-        run: npx snyk test
+        run: npx snyk test --auth=${{ secrets.SNYK_TOKEN }}
         working-directory: ./client
 
-      # Backend (Server) testing
+      # Backend (Server) testing  
       - name: 🔍 Install server dependencies
         run: npm ci
         working-directory: ./server
 
-      - name: 🔑 Authenticate Snyk for server
-        run: npx snyk auth ${{ secrets.SNYK_TOKEN }}
-        working-directory: ./server
-
       - name: 🧪 Run Snyk on server
-        run: npx snyk test
-        working-directory: ./serverˇ
+        run: npx snyk test --auth=${{ secrets.SNYK_TOKEN }}
+        working-directory: ./server
 
   dast:
     name: 🧨 Dynamic Application Security Testing (DAST)
@@ -51,12 +43,12 @@ jobs:
       - name: 🐳 Run ZAP Baseline against client
         uses: zaproxy/action-baseline@v0.9.0
         with:
-          target: 'http://localhost:3000'  # Assuming client runs on port 3000
+          target: 'http://localhost:3000'
 
       - name: 🐳 Run ZAP Baseline against server
         uses: zaproxy/action-baseline@v0.9.0
         with:
-          target: 'http://localhost:4000'  # Assuming server runs on port 4000
+          target: 'http://localhost:4000'
 
   notify:
     name: 📩 Send Email Notification on Failure
@@ -81,6 +73,6 @@ jobs:
             Autore: ${{ github.actor }}
             Link: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
-            ⚠️ Controlla SAST (ESLint/Snyk) e DAST (ZAP) per client e server.
+            ⚠️ Controlla SAST (ESLint/Snyk) e DAST (ZAP).
           to: ${{ secrets.EMAIL_TO }}
           from: ${{ secrets.EMAIL_FROM }}
