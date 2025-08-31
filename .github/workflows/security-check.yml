@@ -21,22 +21,26 @@ jobs:
         run: npx eslint .
         working-directory: ./client
 
+      - name: 🔑 Authenticate Snyk
+        run: npx snyk auth ${{ secrets.SNYK_TOKEN }}
+        working-directory: ./client
+
       - name: 🧪 Run Snyk on client
         run: npx snyk test
         working-directory: ./client
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
       # Backend (Server) testing
       - name: 🔍 Install server dependencies
         run: npm ci
         working-directory: ./server
 
+      - name: 🔑 Authenticate Snyk for server
+        run: npx snyk auth ${{ secrets.SNYK_TOKEN }}
+        working-directory: ./server
+
       - name: 🧪 Run Snyk on server
         run: npx snyk test
-        working-directory: ./server
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        working-directory: ./serverˇ
 
   dast:
     name: 🧨 Dynamic Application Security Testing (DAST)
