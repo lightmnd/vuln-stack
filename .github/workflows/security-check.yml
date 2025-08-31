@@ -15,6 +15,7 @@ jobs:
       - name: 🔍 Run ESLint
         run: |
           npm ci
+          working-directory: ./client
           npx eslint . || exit 1
 
       - name: 🧪 Run Snyk
