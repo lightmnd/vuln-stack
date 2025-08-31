@@ -11,10 +11,17 @@ services:
       - mysql_data:/var/lib/mysql
     ports:
       - '3306:3306'
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "mysql"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
 
   backend:
     build:
       context: ./server
+    restart: always
     depends_on:
       - mysql
     ports:
@@ -30,6 +37,13 @@ services:
       context: ./client
     ports:
       - '3000:3000'
+    environment:
+      - WATCHPACK_POLLING=true    # Enable polling for file changes
+      - CHOKIDAR_USEPOLLING=true  # Enable polling for hot reload
+    volumes:
+      - ./client:/usr/src/app     # Mount source code
+      - /usr/src/app/node_modules # Exclude node_modules
+    command: npm start            # Run in development mode
     depends_on:
       - backend
 
