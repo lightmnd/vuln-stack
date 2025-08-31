@@ -12,11 +12,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: 🔍 Install dependencies in client directory
+        run: npm ci
+        working-directory: ./client
+
       - name: 🔍 Run ESLint
-        run: |
-          npm ci
-          working-directory: ./client
-          npx eslint . || exit 1
+        run: npx eslint .
+        working-directory: ./client
 
       - name: 🧪 Run Snyk
         uses: snyk/actions/node@master
