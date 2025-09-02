@@ -21,8 +21,8 @@ jobs:
         run: npx eslint .
         working-directory: ./client
 
-      - name: 🧪 Run Snyk on client
-        run: npx snyk test --auth=${{ secrets.SNYK_TOKEN }}
+      - name: 🧪 Run Checkov on client
+        run: checkov -d .
         working-directory: ./client
 
       # Backend (Server) testing  
@@ -30,8 +30,8 @@ jobs:
         run: npm ci
         working-directory: ./server
 
-      - name: 🧪 Run Snyk on server
-        run: npx snyk test --auth=${{ secrets.SNYK_TOKEN }}
+      - name: 🧪 Run Checkov on server
+        run: checkov -d .
         working-directory: ./server
 
   dast:
