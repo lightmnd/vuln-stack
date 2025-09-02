@@ -20,9 +20,14 @@ jobs:
       - name: 🔍 Run ESLint on client
         run: npx eslint .
         working-directory: ./client
-
-      - name: 🧪 Run Checkov on client
-        run: checkov -d .
+      
+      # Frontend (Client) testing  
+      - name: 🧪 Run Snyk on client
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high
         working-directory: ./client
 
       # Backend (Server) testing  
@@ -30,8 +35,12 @@ jobs:
         run: npm ci
         working-directory: ./server
 
-      - name: 🧪 Run Checkov on server
-        run: checkov -d .
+      - name: 🧪 Run Snyk on server
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high
         working-directory: ./server
 
   dast:
@@ -41,7 +50,7 @@ jobs:
 
     steps:
       - name: 🐳 Run ZAP Baseline against client
-        uses: zaproxy/action-baseline@v0.9.0
+        uses: zaproxy/action-baseline@v0.9.snyk auth0
         with:
           target: 'http://localhost:3000'
 
