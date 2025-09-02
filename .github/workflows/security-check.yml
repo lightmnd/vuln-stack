@@ -22,11 +22,7 @@ jobs:
         working-directory: ./client
 
       - name: 🧪 Run Snyk on client
-        uses: snyk/actions/node@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          args: --severity-threshold=high
+        run: snyk test --auth=${{ secrets.SNYK_TOKEN }}
         working-directory: ./client
 
       # Backend (Server) testing  
@@ -35,11 +31,7 @@ jobs:
         working-directory: ./server
 
       - name: 🧪 Run Snyk on server
-        uses: snyk/actions/node@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          args: --severity-threshold=high
+        run: snyk test --auth=${{ secrets.SNYK_TOKEN }}
         working-directory: ./server
 
   dast:
