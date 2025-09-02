@@ -22,8 +22,10 @@ jobs:
         working-directory: ./client
 
       - name: 🧪 Run Snyk on client
-        run: snyk test --auth=${{ secrets.SNYK_TOKEN }}
+        run: npx snyk test --auth=$SNYK_TOKEN
         working-directory: ./client
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
       # Backend (Server) testing  
       - name: 🔍 Install server dependencies
@@ -31,8 +33,10 @@ jobs:
         working-directory: ./server
 
       - name: 🧪 Run Snyk on server
-        run: snyk test --auth=${{ secrets.SNYK_TOKEN }}
+        run: npx snyk test --auth=$SNYK_TOKEN
         working-directory: ./server
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
   dast:
     name: 🧨 Dynamic Application Security Testing (DAST)
@@ -41,7 +45,7 @@ jobs:
 
     steps:
       - name: 🐳 Run ZAP Baseline against client
-        uses: zaproxy/action-baseline@v0.9.snyk auth0
+        uses: zaproxy/action-baseline@v0.9.0
         with:
           target: 'http://localhost:3000'
 
@@ -71,7 +75,7 @@ jobs:
             Branch: ${{ github.ref_name }}
             Commit: ${{ github.sha }}
             Autore: ${{ github.actor }}
-            Link: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            Link: https://github.com/${{ secrets.GITHUB_REPOSITORY }}/actions/runs/${{ github.run_id }}
 
             ⚠️ Controlla SAST (ESLint/Snyk) e DAST (ZAP).
           to: ${{ secrets.EMAIL_TO }}
