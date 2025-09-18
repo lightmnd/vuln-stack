@@ -96,7 +96,6 @@ function App() {
       <hr />
 
       <h2>XSS Comment</h2>
-      <a href="https://my-bank.example.com/welcome?user=<img src=x onerror=alert('hello!')>">XX-------X</a>
 
       <input onChange={e => setComment(e.target.value)} placeholder="Comment" />
       {/* /**
@@ -104,12 +103,14 @@ function App() {
        * Demonstrates:
        * - Reflected XSS
        * - Dangerous innerHTML usage
-       * - Unsanitized URL parameters
+       * - Unsanitized URL parametes
        */ }
       <iframe
         title="xss"
         src={`http://localhost:4000/comment?q=${encodeURIComponent(comment)}`}
       ></iframe>
+       
+       <a href="https://my-bank.example.com/welcome?user=<img src=x onerror=alert('hello!')>">Test</a>
 
       <hr />
       <hr />
@@ -230,7 +231,6 @@ function App() {
       <button onClick={async () => {
         try {
           const res = await fetch('http://localhost:4000/debug');
-          console.log(">>>", res);  
           const data = await res.text();
           setData(data);
         } catch (err) {
