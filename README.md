@@ -37,8 +37,8 @@
 
 1. **Clone the Repository:**
     ```bash
-    git clone https://github.com/your-org/vuln-stack-app.git
-    cd vuln-stack-app
+    git clone https://github.com/lightmnd/vuln-stack.git
+    cd vuln-stack
     ```
 2. **Install Dependencies:**
     ```bash
